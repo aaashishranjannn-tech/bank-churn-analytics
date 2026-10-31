@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="THE INVISIBLE PULSE - Banking Customer Churn Analytics" />
+    <title>THE INVISIBLE PULSE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <script>
+      function notifyStreamlit() {
+        try {
+          var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight || 950);
+          window.parent.postMessage({
+            isStreamlitMessage: true,
+            type: "streamlit:setFrameHeight",
+            height: h
+          }, "*");
+        } catch(e) {}
+      }
+      window.addEventListener('load', notifyStreamlit);
+      window.addEventListener('resize', notifyStreamlit);
+      setInterval(notifyStreamlit, 800);
+    </script>
+  </body>
+</html>

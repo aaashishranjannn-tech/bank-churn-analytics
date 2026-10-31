@@ -1,0 +1,62 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.env
+.venv
+venv/
+ENV/
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+.ipynb_checkpoints
+
+# JavaScript / Vite
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Secrets and local environment settings
+.env
+.env.*
+!.env.example
+
+# Python cache and notebook checkpoints
+__pycache__/
+.ipynb_checkpoints/
+# Local Python environment and generated data
+.venv/
+data/
+outputs/
+reports/
+__pycache__/
+.ipynb_checkpoints/
+
+# Frontend dependencies and build output
+frontend/node_modules/
+frontend/dist/
+
+# Secrets
+.env
+.env.*
+!.env.example
