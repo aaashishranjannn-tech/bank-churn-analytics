@@ -2,6 +2,11 @@
 
 An end-to-end, enterprise-grade Machine Learning and Streamlit Business Intelligence solution designed to analyze, predict, and mitigate customer attrition across European retail banking institutions (France, Germany, and Spain).
 
+![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-red.svg)
+![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3%2B-orange.svg)
+![Plotly](https://img.shields.io/badge/Plotly-5.17%2B-navy.svg)
+![Pandas](https://img.shields.io/badge/Pandas-2.0%2B-yellow.svg)
 <p align="left">
   <a href="YOUR_DEMO_URL">
     <img src="YOUR_BADGE_URL">
@@ -10,12 +15,6 @@ An end-to-end, enterprise-grade Machine Learning and Streamlit Business Intellig
     <img src="YOUR_BADGE_URL">
   </a>
 </p>
-
-![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-red.svg)
-![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3%2B-orange.svg)
-![Plotly](https://img.shields.io/badge/Plotly-5.17%2B-navy.svg)
-![Pandas](https://img.shields.io/badge/Pandas-2.0%2B-yellow.svg)
 
 
 
