@@ -2,8 +2,7 @@
 
 An end-to-end, enterprise-grade Machine Learning and Streamlit Business Intelligence solution designed to analyze, predict, and mitigate customer attrition across European retail banking institutions (France, Germany, and Spain).
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen)](
-bank-churn-analytics.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Open%20App-brightgreen)](https://bank-churn-analytics.vercel.app/)
 ![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28%2B-red.svg)
 ![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3%2B-orange.svg)
