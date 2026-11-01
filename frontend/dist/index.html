@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="THE INVISIBLE PULSE - Banking Customer Churn Analytics" />
+    <title>THE INVISIBLE PULSE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-E90kj_Xn.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/react-hhwN-aX7.js">
+    <link rel="modulepreload" crossorigin href="./assets/charts-v7HPmeY9.js">
+    <link rel="modulepreload" crossorigin href="./assets/three-BHwVDFnH.js">
+    <link rel="modulepreload" crossorigin href="./assets/gsap-SFc2wnMY.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-F0yasRmL.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      function notifyStreamlit() {
+        try {
+          var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight, window.innerHeight || 950);
+          window.parent.postMessage({
+            isStreamlitMessage: true,
+            type: "streamlit:setFrameHeight",
+            height: h
+          }, "*");
+        } catch(e) {}
+      }
+      window.addEventListener('load', notifyStreamlit);
+      window.addEventListener('resize', notifyStreamlit);
+      setInterval(notifyStreamlit, 800);
+    </script>
+  </body>
+</html>

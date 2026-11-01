@@ -34,7 +34,6 @@ ENV/
 node_modules/
 frontend/node_modules/
 dist/
-frontend/dist/
 
 # Secrets and local environment settings
 .env
