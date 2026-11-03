@@ -40,15 +40,17 @@ const chartBaseOptions = {
 // Rule-based mock predictor
 function computeRisk(inputs) {
   const {
-    age,
-    creditScore,
-    geography,
-    gender,
-    tenure,
-    balance,
-    products,
-    isActive,
-  } = inputs;
+  age,
+  creditScore,
+  geography,
+  gender,
+  tenure,
+  balance,
+  products,
+  isActive,
+  hasCreditCard,
+  estimatedSalary,
+} = inputs;
 
   let score = 0;
 
@@ -114,16 +116,18 @@ const ROC_DATA = [
 ];
 
 export default function MLPrediction() {
-  const [form, setForm] = useState({
-    age: 40,
-    creditScore: 650,
-    tenure: 5,
-    geography: 'France',
-    gender: 'Male',
-    products: 1,
-    balance: 75000,
-    isActive: true,
-  });
+ const [form, setForm] = useState({
+  age: 40,
+  creditScore: 650,
+  tenure: 5,
+  geography: 'France',
+  gender: 'Male',
+  products: 1,
+  balance: 75000,
+  isActive: true,
+  hasCreditCard: true,
+  estimatedSalary: 80000,
+});
   const [result, setResult] = useState(null);
 
   const handleChange = (field) => (e) => {
@@ -132,12 +136,47 @@ export default function MLPrediction() {
     setResult(null);
   };
 
-  const handleCompute = () => {
-    const prob = computeRisk(form);
-    const tier = getRiskTier(prob);
-    setResult({ prob, tier });
-  };
+ const handleCompute = async () => {
+    // Prepare customer data for Python ML backend
+    const customerData = {
+      CreditScore: Number(form.creditScore),
+      Geography: form.geography,
+      Gender: form.gender,
+      Age: Number(form.age),
+      Tenure: Number(form.tenure),
+      Balance: Number(form.balance),
+      NumOfProducts: Number(form.products),
+      HasCrCard: Number(form.hasCreditCard),
+      IsActiveMember: Number(form.isActive),
+      EstimatedSalary: Number(form.estimatedSalary),
+    };
 
+    console.log("Customer Data:", customerData);
+
+    try {
+      const response = await fetch('http://localhost:8000/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customerData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch prediction from backend');
+      }
+
+      const data = await response.json();
+      
+      // Convert real probability (e.g., 0.45) to a percentage (45)
+      const prob = Math.round(data.probability * 100);
+      const tier = getRiskTier(prob);
+      setResult({ prob, tier });
+
+    } catch (error) {
+      console.error("Backend connection failed:", error);
+    }
+  };
   const inputStyle = {
     width: '100%',
     background: 'rgba(255,255,255,0.04)',
@@ -207,6 +246,19 @@ export default function MLPrediction() {
               onBlur={e => e.target.style.borderColor = 'rgba(57,255,20,0.2)'} />
           </div>
 
+          <div style={fieldStyle}>
+  <label style={labelStyle}>Estimated Salary ($)</label>
+  <input
+    type="number"
+    min="0"
+    max="200000"
+    step="100"
+    value={form.estimatedSalary}
+    onChange={handleChange('estimatedSalary')}
+    style={inputStyle}
+  />
+</div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div style={fieldStyle}>
               <label style={labelStyle}>Geography</label>
@@ -235,6 +287,32 @@ export default function MLPrediction() {
               style={{ accentColor: '#39ff14', width: '16px', height: '16px', cursor: 'pointer' }} />
             <label htmlFor="active" style={{ ...labelStyle, marginBottom: 0, cursor: 'pointer' }}>Is Active Member</label>
           </div>
+
+          <div style={{
+  ...fieldStyle,
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.75rem'
+}}>
+  <input
+    type="checkbox"
+    id="creditCard"
+    checked={form.hasCreditCard}
+    onChange={handleChange('hasCreditCard')}
+    style={{
+      accentColor: '#39ff14',
+      width: '16px',
+      height: '16px',
+      cursor: 'pointer'
+    }}
+  />
+  <label
+    htmlFor="creditCard"
+    style={{ ...labelStyle, marginBottom: 0, cursor: 'pointer' }}
+  >
+    Has Credit Card
+  </label>
+</div>
 
           <button
             onClick={handleCompute}
@@ -273,7 +351,7 @@ export default function MLPrediction() {
               </div>
               <div style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: '3.5rem',
+                fontSize: '3.5rem', 
                 fontWeight: 700,
                 color: result.tier.color,
                 lineHeight: 1,
