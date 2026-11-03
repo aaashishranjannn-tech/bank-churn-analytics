@@ -1,57 +1,133 @@
-from fastapi import FastAPI
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 
 app = FastAPI()
 
-# Enable CORS for your React frontend
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 print("Loading dataset and training model...")
 
-# 1. Load data directly from your CSV file
-df = pd.read_csv("../data/bank_churn.csv")
+# 1. Load dataset using an absolute path
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_PATH = BASE_DIR / "data" / "bank_churn.csv"
 
-# 2. Define the exact 10 features your React frontend sends
+df = pd.read_csv(DATA_PATH)
+
+# 2. Define the exact 10 frontend features
 feature_columns = [
-    'CreditScore', 'Geography', 'Gender', 'Age', 'Tenure', 
-    'Balance', 'NumOfProducts', 'HasCrCard', 'IsActiveMember', 'EstimatedSalary'
+    'CreditScore',
+    'Geography',
+    'Gender',
+    'Age',
+    'Tenure',
+    'Balance',
+    'NumOfProducts',
+    'HasCrCard',
+    'IsActiveMember',
+    'EstimatedSalary'
 ]
 
 X = df[feature_columns].copy()
+y = df['Exited']
 
-# Encode text columns (Geography, Gender) into numbers so the model can read them
+# 3. Create and SAVE category mappings during training
+category_mappings = {}
+
 for col in ['Geography', 'Gender']:
-    if col in X.columns:
-        X[col] = X[col].astype('category').cat.codes
+    categories = X[col].astype('category').cat.categories
 
-y = df['Exited']  # Churn target column
+    category_mappings[col] = {
+        category: code
+        for code, category in enumerate(categories)
+    }
 
-# 3. Train a fresh model right here on startup
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+    X[col] = X[col].map(category_mappings[col])
+
+# 4. Train model
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
 model.fit(X, y)
 
 print("Model trained and ready for requests!")
 
+
+# 5. Prediction endpoint
 @app.post("/api/predict")
 def predict(data: dict):
-    # Convert incoming JSON from React into a DataFrame
-    input_df = pd.DataFrame([data])
-    
-    # Apply the same categorical encoding
+
+    # Check all required features are present
+    missing = [
+        col for col in feature_columns
+        if col not in data
+    ]
+
+    if missing:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Missing features: {missing}"
+        )
+
+    # Create DataFrame in exact feature order
+    input_df = pd.DataFrame(
+        [[data[col] for col in feature_columns]],
+        columns=feature_columns
+    )
+
+    # Apply the SAME category mappings used during training
     for col in ['Geography', 'Gender']:
-        if col in input_df.columns:
-            input_df[col] = input_df[col].astype('category').cat.codes
-            
-    # Run real inference
+
+        value = input_df.at[0, col]
+
+        if value not in category_mappings[col]:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid {col}: {value}"
+            )
+
+        input_df[col] = input_df[col].map(
+            category_mappings[col]
+        )
+
+    # Convert numerical features
+    numeric_columns = [
+        col for col in feature_columns
+        if col not in ['Geography', 'Gender']
+    ]
+
+    for col in numeric_columns:
+        input_df[col] = pd.to_numeric(
+            input_df[col],
+            errors='coerce'
+        )
+
+    if input_df.isnull().any().any():
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or missing feature values"
+        )
+
+    # Run actual ML prediction
     prediction = int(model.predict(input_df)[0])
-    probability = float(model.predict_proba(input_df)[0][1]) # Churn probability
-    
-    return {"prediction": prediction, "probability": probability}
+
+    probability = float(
+        model.predict_proba(input_df)[0][1]
+    )
+
+    return {
+        "prediction": prediction,
+        "probability": probability
+    }
