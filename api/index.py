@@ -40,7 +40,7 @@ model.fit(X, y)
 
 print("Model trained and ready for requests!")
 
-@app.post("/predict")
+@app.post("/api/predict")
 def predict(data: dict):
     # Convert incoming JSON from React into a DataFrame
     input_df = pd.DataFrame([data])
